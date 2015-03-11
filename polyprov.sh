@@ -38,7 +38,8 @@ TFTP_DIR="/tftpboot/"
 
 while IFS="," read EXT MAC
 do
-  cp -f $CONFIGTEMPLATE ${TFTP_DIR}/${MAC}.cfg
+  cp -f ${TFTP_DIR}/${CONFIGTEMPLATE} ${TFTP_DIR}/${MAC}-basic.cfg
+  sed -i "s/1113/${EXT}/g" ${TFTP_DIR}/${MAC}-basic.cfg
 done < $CSVFILE
 
 #./server-change.sh $SERVER_IP
@@ -64,7 +65,7 @@ else
 fi
 
 # If IP address is valid, apply to all configs.
-for FILE in $(find ${TFTP_DIR} -type f -iname "*.cfg" -print | xargs grep -i "$CONFIG_SERVER_LINE" | cut -d : -f 1)
+for FILE in $(find ${TFTP_DIR} -type f -iname "*-basic.cfg" -print | xargs grep -i "$CONFIG_SERVER_LINE" | cut -d : -f 1)
   do
     sed -i -e "/${CONFIG_SERVER_LINE}=/ s/=\".*\"/=\"${SERVER_IP}\"/" $FILE
     echo "${FILE} has been updated."
