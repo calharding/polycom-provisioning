@@ -20,12 +20,14 @@ SERVER_IP=${ARGS[1]}
 # The filename you want to use for the CSV to be generated from spreadsheet.
 CSVFILE="polycom.csv"
 
-# The template that all configs will be based on.
+# The path to the template that all configs will be based on.
 CONFIGTEMPLATE="config-template.xml"
 
 # The line in the newly generated config to use for the server IP address.
-CONFIG_LINE="reg.1.server.1.address"
+CONFIG_SERVER_LINE="reg.1.server.1.address"
 
+# TFTP directory
+TFTP_DIR="/tftpboot/"
 
 # Run the perl script to generate a CSV from xlsx file
 ./xlsx.pl $SPREADSHEET > $CSVFILE
@@ -36,19 +38,19 @@ CONFIG_LINE="reg.1.server.1.address"
 
 while IFS="," read EXT MAC
 do
-  cp -f $CONFIGTEMPLATE ${MAC}.cfg
+  cp -f $CONFIGTEMPLATE ${TFTP_DIR}/${MAC}.cfg
 done < $CSVFILE
 
 #./server-change.sh $SERVER_IP
 
-###########################################################               
+###########################################################
 # Change registration server address in all autoprovisioning configs
 # to address provided as commandline argument
 #
-# By changing the CONFIG_LINE variable and removing the check for a valid IP,
+# By changing the CONFIG_SERVER_LINE variable and removing the check for a valid IP,
 # the script becomes extensible and should allow the ability to modify any config option.
 #
-############################################################  
+############################################################
 
 
 # Check if script argument is a valid IP, otherwise exit immediately.
@@ -62,8 +64,8 @@ else
 fi
 
 # If IP address is valid, apply to all configs.
-for FILE in $(find . -type f -iname "*.cfg" -print | xargs grep -i "$CONFIG_LINE" | cut -d : -f 1)
+for FILE in $(find ${TFTP_DIR} -type f -iname "*.cfg" -print | xargs grep -i "$CONFIG_SERVER_LINE" | cut -d : -f 1)
   do
-    sed -i -e "/${CONFIG_LINE}=/ s/=\".*\"/=\"${SERVER_IP}\"/" $FILE
+    sed -i -e "/${CONFIG_SERVER_LINE}=/ s/=\".*\"/=\"${SERVER_IP}\"/" $FILE
     echo "${FILE} has been updated."
 done
