@@ -65,8 +65,8 @@ else
 fi
 
 # If IP address is valid, apply to all configs.
-for FILE in $(find ${TFTP_DIR} -type f -iname "*-basic.cfg" -print | xargs grep -i "$CONFIG_SERVER_LINE" | cut -d : -f 1)
+for FILE in $(find ${TFTP_DIR} -type f -iname "*basic.cfg" -print | xargs grep -i "$CONFIG_SERVER_LINE" | cut -d : -f 1)
   do
-    sed -i -e "/${CONFIG_SERVER_LINE}=/ s/=\".*\"/=\"${SERVER_IP}\"/" $FILE
+    sed -i -e "/${CONFIG_SERVER_LINE}=/ s/=\".*\"/=\"${SERVER_IP}\"/g" $FILE
     echo "${FILE} has been updated."
 done
