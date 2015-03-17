@@ -24,10 +24,18 @@ CSVFILE="polycom.csv"
 CONFIGTEMPLATE="config-template.xml"
 
 # The line in the newly generated config to use for the server IP address.
+# reg.1.server.1.address may not be correct and is just temporary
 CONFIG_SERVER_LINE="reg.1.server.1.address"
 
 # TFTP directory
 TFTP_DIR="/tftpboot/"
+
+#Database variables
+DBUSER="corne"
+DBPASS="10810cbv"
+DBHOST="10.71.0.2"
+
+
 
 # Run the perl script to generate a CSV from xlsx file
 ./xlsx.pl $SPREADSHEET > $CSVFILE
