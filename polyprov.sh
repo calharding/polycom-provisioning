@@ -38,9 +38,9 @@ CONFIG_SERVER_LINE="voIpProt.server.1.address"
 TFTP_DIR="/tftpboot/"
 
 #Database variables
-DBUSER="corne"
-DBPASS="10810cbv"
-DBHOST="10.71.0.2"
+DBUSER="somesqluser"
+DBPASS="somesqlpass"
+DBHOST="10.20.30.40"
 DBTMPFILE="sql.tmp"
 
 ###########################
