@@ -32,7 +32,7 @@ CONFIGTEMPLATE="config-template.xml"
 
 # The line in the newly generated config to use for the server IP address.
 # reg.1.server.1.address may not be correct and is just temporary
-CONFIG_SERVER_LINE="reg.1.server.1.address"
+CONFIG_SERVER_LINE="voIpProt.server.1.address"
 
 # TFTP directory
 TFTP_DIR="/tftpboot/"
