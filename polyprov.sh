@@ -88,21 +88,7 @@ done < $CSVFILE
 # Change registration server address in all autoprovisioning configs
 # to address provided as commandline argument
 #
-# By changing the CONFIG_SERVER_LINE variable and removing the check for a valid IP,
-# the script becomes extensible and should allow the ability to modify any config option.
-#
 ############################################################
-
-
-# Check if script argument is a valid IP, otherwise exit immediately.
-#OCTET='([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])'
-#
-#if [[ $SERVER_IP =~ ^${OCTET}\.${OCTET}\.${OCTET}\.${OCTET}$ ]]; then
-#  echo "Valid IP address provided. Continguing with configuration changes..."
-#else
-#  echo "Provided IP address invalid. Please run again with a valid IP as argument."
-#  exit
-#fi
 
 
 # If the server IP passed as a commandline argument DOES NOT equal 0.0.0.0, then
