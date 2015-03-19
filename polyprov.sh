@@ -59,9 +59,9 @@ done < $DBTMPFILE
 # And in each file, enter the correct server line according to DB array
 while IFS="," read EXT MAC
 do
-  cp -f ${TFTP_DIR}/${CONFIGTEMPLATE} ${TFTP_DIR}/${MAC}-basic.cfg
-  sed -i "s/1113/${EXT}/g" ${TFTP_DIR}/${MAC}-basic.cfg
-  sed -i -e "/${CONFIG_SERVER_LINE}=/ s/=\".*\"/=\"${SERVER[${EXT}]}\"/g" ${TFTP_DIR}/${MAC}-basic.cfg
+  cp -f ${TFTP_DIR}/${CONFIGTEMPLATE} ${TFTP_DIR}/${MAC,,}-basic.cfg
+  sed -i "s/1113/${EXT}/g" ${TFTP_DIR}/${MAC,,}-basic.cfg
+  sed -i -e "/${CONFIG_SERVER_LINE}=/ s/=\".*\"/=\"${SERVER[${EXT}]}\"/g" ${TFTP_DIR}/${MAC,,}-basic.cfg
 #  echo ${SERVER[${EXT}]}
 done < $CSVFILE
 
