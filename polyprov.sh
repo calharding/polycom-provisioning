@@ -17,6 +17,9 @@ SPREADSHEET=${ARGS[0]}
 # Second commandline argument. The IP address of the server to use.
 SERVER_IP=${ARGS[1]}
 
+# Default server address when nothing specified and no DB server info can be found.
+DEF_SERVER="192.168.192.168"
+
 # The filename you want to use for the CSV to be generated from spreadsheet.
 CSVFILE="polycom.csv"
 
@@ -37,6 +40,12 @@ DBHOST="10.71.0.2"
 DBTMPFILE="sql.tmp"
 
 
+# If the SERVER_IP variable is not set, default to 0.0.0.0 (DB lookup values)
+if [ -z $SERVER_IP ]; then
+  SERVER_IP="0.0.0.0"
+fi
+
+
 # Run the perl script to generate a CSV from xlsx file
 ./xlsx.pl $SPREADSHEET > $CSVFILE
 
@@ -44,7 +53,7 @@ DBTMPFILE="sql.tmp"
 # DB CODE
 # Creates an associative array with extension as key and server (pulled from DB) as value.
 mysql -N -B -h $DBHOST -u $DBUSER -p${DBPASS} asterisk -e 'select extension,server_ip from phones' | tr "\\t" "," > $DBTMPFILE
-
+# Declare and populate associative array. KEY=extension, VALUE=server
 declare -A SERVER
 while IFS=, read -r -a array
 do
@@ -60,6 +69,11 @@ done < $DBTMPFILE
 while IFS="," read EXT MAC
 do
   cp -f ${TFTP_DIR}/${CONFIGTEMPLATE} ${TFTP_DIR}/${MAC,,}-basic.cfg
+  # If extension in CSV/spreadsheet does not have associated DB server, set server value to default
+  if [ -z ${SERVER[${EXT}]} ]; then
+    SERVER[${EXT}]="${DEF_SERVER}"
+  fi
+  # Do replacements
   sed -i "s/1113/${EXT}/g" ${TFTP_DIR}/${MAC,,}-basic.cfg
   sed -i -e "/${CONFIG_SERVER_LINE}=/ s/=\".*\"/=\"${SERVER[${EXT}]}\"/g" ${TFTP_DIR}/${MAC,,}-basic.cfg
 #  echo ${SERVER[${EXT}]}
@@ -87,15 +101,16 @@ done < $CSVFILE
 #  exit
 #fi
 
+
 # If the server IP passed as a commandline argument DOES NOT equal 0.0.0.0, then
 # overwrite the values pulled from the DB and set that globally as the server address.
-#if [ $SERVER_IP does not equal 0.0.0.0 ] #pseudocode for now. please fix.
-#  for FILE in $(find ${TFTP_DIR} -type f -iname "*basic.cfg" -print | xargs grep -i "$CONFIG_SERVER_LINE" | cut -d : -f 1)
-#    do
-#      sed -i -e "/${CONFIG_SERVER_LINE}=/ s/=\".*\"/=\"${SERVER_IP}\"/g" $FILE
+if [ "$SERVER_IP" != "0.0.0.0" ]; then
+  for FILE in $(find ${TFTP_DIR} -type f -iname "*basic.cfg" -print | xargs grep -i "$CONFIG_SERVER_LINE" | cut -d : -f 1)
+    do
+      sed -i -e "/${CONFIG_SERVER_LINE}=/ s/=\".*\"/=\"${SERVER_IP}\"/g" $FILE
 #      echo "${FILE} has been updated."
-#  done
-#fi
+  done
+fi
 
 
 # Cleanup
