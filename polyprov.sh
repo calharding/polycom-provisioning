@@ -2,13 +2,17 @@
 
 #######################################################
 # Take 2 commandline arguments: spreadsheet and server IP
-# Call various functions:
 #
-# 1. xlsx.pl converts spreadsheet to CSV. spreadsheet MUST be |EXTENSION|MACADDR|
-# 2. csvcontrol.sh creates .cfg file for each MAC address and copies default template to it.
-# 3. server-change.sh adds new server IP address to each newly created config.
+# Set registration server in configs to server IP. If no
+# server IP provided, look up extensions and their
+# associated server addresses in (SQL) database.
 ########################################################
 
+#############################
+# Begin variable declarations
+#############################
+
+# commandline arguments
 ARGS=("$@")
 
 # First commandline argument. The name of the spreadsheet with the extensions and macs.
@@ -39,6 +43,9 @@ DBPASS="10810cbv"
 DBHOST="10.71.0.2"
 DBTMPFILE="sql.tmp"
 
+###########################
+# End variable declarations
+###########################
 
 # If the SERVER_IP variable is not set, default to 0.0.0.0 (DB lookup values)
 if [ -z $SERVER_IP ]; then
@@ -62,8 +69,6 @@ do
 done < $DBTMPFILE
 
 
-#./csvcontrol.sh $CSVFILE
-
 # Read CSV. For each MAC address, make a config file and set correct extensions within that file.
 # And in each file, enter the correct server line according to DB array
 while IFS="," read EXT MAC
@@ -76,10 +81,8 @@ do
   # Do replacements
   sed -i "s/1113/${EXT}/g" ${TFTP_DIR}/${MAC,,}-basic.cfg
   sed -i -e "/${CONFIG_SERVER_LINE}=/ s/=\".*\"/=\"${SERVER[${EXT}]}\"/g" ${TFTP_DIR}/${MAC,,}-basic.cfg
-#  echo ${SERVER[${EXT}]}
 done < $CSVFILE
 
-#./server-change.sh $SERVER_IP
 
 ###########################################################
 # Change registration server address in all autoprovisioning configs
@@ -116,9 +119,3 @@ fi
 # Cleanup
 rm -f $DBTMPFILE
 rm -f $CSVFILE
-
-
-# TODO
-# create ${MAC}-basic.cfg as both upper and lowercase
-# 
-# If extension exists in the spreadsheet but NOT the DB, set server address as the current genesys address.
