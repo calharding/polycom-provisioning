@@ -87,7 +87,6 @@ done < $CSVFILE
 ###########################################################
 # Change registration server address in all autoprovisioning configs
 # to address provided as commandline argument
-#
 ############################################################
 
 
