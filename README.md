@@ -1,6 +1,6 @@
 # polyprov.sh
 
-A script to automatically re-provision polycom phones when server details change (manual failover)
+A script to automatically re-provision polycom phones when server details change (manual failover).
 
 The DHCP server should be enabled with option 66 to point the Polycoms to a TFTP server to fetch their boot files.
 
